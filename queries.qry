@@ -1,0 +1,15 @@
+/**
+ * New query file
+ */
+
+query selectDrivers {
+  description: "Select all drivers"
+  statement:
+      SELECT org.example.basic.Driver
+}
+
+query selectPolice {
+  description: "Select all police"
+  statement:
+      SELECT org.example.basic.Police
+}
