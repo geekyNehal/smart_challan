@@ -1,0 +1,95 @@
+/**
+ * Access control list.
+ */
+rule PoliceCanReadEverything {
+    description: "Allow all Police read access to all resources"
+    participant: "org.example.basic.Police"
+    operation: READ
+    resource: "org.hyperledger.composer.system.Participant"
+    action: ALLOW
+}
+
+rule DriverCanSubmitFineGivenTransactions {
+    description: "Allow all participants to submit transactions"
+    participant: "org.example.basic.Driver"
+    operation: CREATE
+    resource: "org.example.basic.FineGiven"
+    action: ALLOW
+}
+
+rule PoliceCanSubmitFineReceivedTransactions {
+    description: "Allow all participants to submit transactions"
+    participant: "org.example.basic.Police"
+    operation: CREATE
+    resource: "org.example.basic.FineReceived"
+    action: ALLOW
+}
+
+rule DriverHasFullAccessToTheirRecord {
+    description: "Allow all participants full access to their record"
+    participant(p): "org.example.basic.Driver"
+    operation: ALL
+    resource(r): "org.example.basic.Driver"
+    condition: (r.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+}
+
+rule PoliceHasFullAccessToTheirRecord {
+    description: "Allow all participants full access to their record"
+    participant(p): "org.example.basic.Police"
+    operation: ALL
+    resource(r): "org.example.basic.Police"
+    condition: (r.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+}
+
+
+rule AuthorizeAccessTransaction {
+    description: "Allow all participants to submit AuthorizeAccess transactions"
+    participant: "org.example.basic.Driver"
+    operation: CREATE
+    resource: "org.example.basic.AuthorizeAccess"
+    action: ALLOW
+}
+
+rule RevokeAccessTransaction {
+    description: "Allow all participants to submit RevokeAccess transactions"
+    participant: "org.example.basic.Driver"
+    operation: CREATE
+    resource: "org.example.basic.RevokeAccess"
+    action: ALLOW
+}
+
+rule ForeignRecordConditionalAccess {
+    description: "Allow Police access to other people's records if granted"
+    participant(p): "org.example.basic.Police"
+    operation: ALL
+    resource(r): "org.example.basic.Police"
+    condition: (r.authorized && r.authorized.indexOf(p.getIdentifier()) > -1)
+    action: ALLOW
+}
+
+
+rule SystemACL {
+    description: "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
