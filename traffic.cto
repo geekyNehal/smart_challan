@@ -1,0 +1,72 @@
+/**
+ * Creating participant, assets and transaction definition
+ */
+namespace org.example.basic
+
+abstract concept Address{
+	o String addressLine
+    o String locality
+}
+
+concept Pincode extends Address{
+	o String pin regex=/\d{6}/
+}
+
+enum Gender{
+	o FEMALE
+    o MALE
+    o OTHER
+}
+
+concept Vehicle{
+	o String vehicleNo
+    o String owner
+}
+
+participant Driver identified by licenceNumber{
+	o String licenceNumber
+    o Pincode pin
+    o Gender gender
+    o String name
+    o String age
+    o Vehicle vehicle
+    o String[] authorized optional
+}
+
+participant Police identified by policeId{
+	o String policeId
+    o Pincode pin
+    o Gender gender
+    o String name
+    o String age
+}
+
+abstract transaction FineTransaction{
+	o String driverId
+    o Double amount
+    o String policeId
+}
+
+transaction FineGiven extends FineTransaction{
+}
+
+transaction FineReceived extends FineTransaction{
+}
+
+abstract transaction AccessTransaction{
+	o String policeId
+}
+
+transaction AuthorizeAccess extends AccessTransaction{
+}
+
+transaction RevokeAccess extends AccessTransaction{
+}
+
+event FineTransactionEvent{
+	o  FineTransaction fineTransaction
+}
+
+event AccessTransactionEvent{
+	o AccessTransaction accessTransaction
+}
